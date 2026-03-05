@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <p>Hi, {{writer.name}}</p>
+
+    {% for book in books %}
+        <p>
+            <b>{{book.author.name}} wrote {{book.ti}}</b>
+        </p>
+    {% endfor %}
+{% endblock %}

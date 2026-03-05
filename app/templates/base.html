@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+        {% if title %}
+		    <title>{{ title }}</title>
+        {% else %}
+            <title>Book Reviews</title>
+        {% endif %}
+		<link rel="icon" type="image/x-icon" href="C:\Users\tongt\OneDrive\Hình ảnh\Screenshots\Screenshot 2026-02-19 211617.png">
+		<style>
+			:root{
+				--bg:#ffffff;
+				--accent:#2b6cb0;
+				--muted:#6b7280;
+				--nav-height:64px;
+			}
+			*{box-sizing:border-box}
+			body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;color:#111;background:var(--bg)}
+
+			.navbar{display:flex;align-items:center;justify-content:space-between;height:var(--nav-height);padding:0 1rem;border-bottom:1px solid #e6e9ee}
+			.brand{display:flex;align-items:center;gap:0.5rem;font-weight:700;color:var(--accent);text-decoration:none}
+			.brand .logo{width:36px;height:36px;border-radius:6px;background:linear-gradient(135deg,var(--accent),#1e40af);display:inline-block}
+
+			.nav-links{display:flex;gap:1rem;align-items:center}
+			.nav-links a{color:#111;text-decoration:none;padding:0.5rem 0.6rem;border-radius:6px;font-weight:500}
+
+			.cta{background:var(--accent);color:#fff;padding:0.45rem 0.75rem;border-radius:6px}
+			.nav-toggle{display:none;border:0;padding:8px;background:transparent}
+
+			/* Dropdown */
+			.dropdown{position:relative}
+			.dropdown-toggle{color:#111;text-decoration:none;padding:0.5rem 0.6rem;border-radius:6px;font-weight:500;display:inline-block}
+			.dropdown-toggle:hover{background:#f3f6fb}
+			.dropdown-menu{position:absolute;top:100%;left:0;display:none;flex-direction:column;min-width:160px;background:#fff;border:1px solid #e6e9ee;border-radius:8px;padding:0.25rem;box-shadow:0 6px 18px rgba(20,20,40,0.06);z-index:60}
+			.dropdown-menu a{padding:0.5rem 0.75rem;border-radius:6px;color:#111;white-space:nowrap}
+			.dropdown:hover .dropdown-menu,
+			.dropdown.open .dropdown-menu{display:flex}
+
+			@media (max-width:768px){
+				.nav-links{position:absolute;top:var(--nav-height);left:0;right:0;flex-direction:column;padding:1rem;border-bottom:1px solid #e6e9ee;display:none}
+				.nav-links.show{display:flex}
+				.nav-links a{width:100%}
+				.nav-toggle{display:inline-flex}
+				/* Mobile: make dropdown inline inside the stacked menu */
+				.dropdown-menu{position:static;border:0;box-shadow:none;padding-left:0}
+			}
+
+			main{padding:2rem}
+			.hero{max-width:900px;margin:0 auto}
+			h1{margin:0 0 0.5rem 0}
+			p.lead{color:var(--muted)}
+
+			.nav_but:hover
+			{
+				background:#f3f6fb
+			}
+		</style>
+	</head>
+	<body>
+		<header class="navbar" role="banner">
+			<a href="/index" class="brand" aria-label="Book Reviews home">
+				<span class="logo" aria-hidden="true"></span>
+				<span>Book Reviews</span>
+			</a>
+
+			<nav role="navigation" aria-label="Primary" class="">
+				<button class="nav-toggle" aria-controls="primary-navigation" aria-expanded="false">
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+				</button>
+
+				<div id="primary-navigation" class="nav-links">
+					<a href="{{ url_for('index') }}" class = "nav_but">Home</a>
+					<a href="#reviews" class = "nav_but">Reviews</a>
+					<div class="dropdown">
+						<a href="#categories" class="dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">Categories</a>
+						<div class="dropdown-menu" role="menu" aria-label="Categories Menu">
+							<a href="/categories/fiction" role="menuitem">Fiction</a>
+							<a href="/categories/non-fiction" role="menuitem">Non-fiction</a>
+							<a href="/categories/poetry" role="menuitem">Poetry</a>
+							<a href="/categories/scifi" role="menuitem">Sci-Fi</a>
+						</div>
+					</div>
+					<a href="#about" class = "nav_but">About</a>
+					<a href="{{ url_for('login') }}" class="cta" style="color:white;">Log in</a>
+				</div>
+			</nav>
+		</header>
+
+		<script>
+			(function(){
+				const toggle = document.querySelector('.nav-toggle');
+				const nav = document.getElementById('primary-navigation');
+				if(toggle && nav){
+					toggle.addEventListener('click', ()=>{
+						const isOpen = nav.classList.toggle('show');
+						toggle.setAttribute('aria-expanded', String(isOpen));
+					});
+				}
+
+				// Dropdown toggle for touch / mobile
+				const ddToggles = document.querySelectorAll('.dropdown-toggle');
+				ddToggles.forEach(btn=>{
+					const parent = btn.closest('.dropdown');
+					btn.addEventListener('click', (e)=>{
+						e.preventDefault();
+						const isOpen = parent.classList.toggle('open');
+						btn.setAttribute('aria-expanded', String(isOpen));
+					});
+				});
+
+				// Close dropdowns when clicking outside
+				document.addEventListener('click', (e)=>{
+					if(!e.target.closest('.dropdown')){
+						document.querySelectorAll('.dropdown.open').forEach(d=>{
+							d.classList.remove('open');
+							d.querySelector('.dropdown-toggle')?.setAttribute('aria-expanded','false');
+						});
+					}
+				});
+			})();
+		</script>
+
+		<hr>
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+		<ul>
+			{% for message in messages %}
+			<li>{{ message }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+		{% endwith %}
+		{% block content %} {% endblock %}
+	</body>
+</html>
