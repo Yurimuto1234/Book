@@ -83,7 +83,11 @@
 						</div>
 					</div>
 					<a href="#about" class = "nav_but">About</a>
+					{% if current_user.is_anonymous %}
 					<a href="{{ url_for('login') }}" class="cta" style="color:white;">Log in</a>
+					{% else %}
+					<a href = "{{ url_for('logout') }}" class="cta" style="color:white;">Log out</a>
+					{% endif %}
 				</div>
 			</nav>
 		</header>
@@ -123,15 +127,5 @@
 		</script>
 
 		<hr>
-		{% with messages = get_flashed_messages() %}
-		{% if messages %}
-		<ul>
-			{% for message in messages %}
-			<li>{{ message }}</li>
-			{% endfor %}
-		</ul>
-		{% endif %}
-		{% endwith %}
-		{% block content %} {% endblock %}
 	</body>
 </html>

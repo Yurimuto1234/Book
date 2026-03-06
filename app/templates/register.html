@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Folio — Sign In</title>
+<title>Folio — Create Account</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap');
 
@@ -100,7 +100,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 .logo-name { font-family:var(--serif); font-size:22px; font-weight:600; letter-spacing:0.12em; color:#f5efe0; }
 
-.big-quote { font-family:var(--serif); font-size:clamp(26px,2.8vw,38px); font-style:italic; font-weight:300; line-height:1.3; color:#f5efe0; margin-bottom:16px; max-width:380px; }
+.big-quote { font-family:var(--serif); font-size:clamp(24px,2.6vw,36px); font-style:italic; font-weight:300; line-height:1.3; color:#f5efe0; margin-bottom:16px; max-width:380px; }
 .big-quote strong { font-style:normal; font-weight:600; color:#e8a84a; }
 .attr { font-size:12px; color:rgba(245,239,224,0.4); letter-spacing:0.15em; text-transform:uppercase; margin-bottom:28px; }
 .divider-line { width:40px; height:1px; background:var(--gold-dim); margin-bottom:20px; opacity:0.7; }
@@ -110,7 +110,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 .right {
   flex: 1;
   display: flex; align-items: center; justify-content: center;
-  padding: 40px 52px;
+  padding: 32px 52px;
   background: var(--bg);
   position: relative;
   overflow-y: auto;
@@ -122,15 +122,21 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   pointer-events: none;
 }
 
+/* scrollbar styling */
+.right::-webkit-scrollbar { width: 4px; }
+.right::-webkit-scrollbar-track { background: transparent; }
+.right::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
 .card {
   position: relative; z-index: 1;
-  width: 100%; max-width: 380px;
+  width: 100%; max-width: 400px;
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 44px 40px;
+  padding: 40px 40px 36px;
   box-shadow: 0 0 0 1px rgba(200,134,42,0.08), 0 20px 60px rgba(26,18,9,0.12), 0 4px 16px rgba(26,18,9,0.08);
   animation: rise 0.65s cubic-bezier(0.22,1,0.36,1) both;
+  margin: auto;
 }
 @keyframes rise { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
 .card::before {
@@ -141,151 +147,110 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
 }
 
 .card-eyebrow { font-size:10.5px; font-weight:500; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); margin-bottom:10px; }
-.card-title { font-family:var(--serif); font-size:36px; font-weight:300; line-height:1.1; color:var(--text); margin-bottom:6px; }
+.card-title { font-family:var(--serif); font-size:34px; font-weight:300; line-height:1.1; color:var(--text); margin-bottom:6px; }
 .card-title em { font-style:italic; font-weight:600; }
-.card-sub { font-size:13px; color:var(--muted); margin-bottom:32px; font-weight:300; }
+.card-sub { font-size:13px; color:var(--muted); margin-bottom:28px; font-weight:300; }
 
-/* ── Form fields ── */
-.field { margin-bottom:20px; }
-.field-label,
+/* two-column grid for password fields */
+.field-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+
+/* ── Fields ── */
+.field { margin-bottom:16px; }
 .field label {
   display:block; font-size:10.5px; font-weight:500;
   letter-spacing:0.18em; text-transform:uppercase;
-  color:var(--muted); margin-bottom:8px;
-  transition: color 0.2s;
+  color:var(--muted); margin-bottom:7px; transition: color 0.2s;
 }
-.field:focus-within label,
-.field:focus-within .field-label { color:var(--gold); }
+.field:focus-within label { color:var(--gold); }
 
 .input-wrap { position:relative; }
 
 .input-icon {
-  position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  position:absolute; left:13px; top:50%; transform:translateY(-50%);
   color:var(--muted); pointer-events:none; display:flex; transition:color 0.2s;
 }
 .field:focus-within .input-icon { color:var(--gold); }
 
-/* Style all WTForms-generated inputs */
 .field input[type="text"],
-.field input[type="password"],
-input.styled-input {
-  width:100%; padding:13px 16px 13px 42px;
+.field input[type="email"],
+.field input[type="password"] {
+  width:100%; padding:12px 14px 12px 40px;
   background: #faf6ee;
   border:1px solid var(--border-lt); border-radius:9px;
-  font-family:var(--sans); font-size:14px; color:var(--text);
+  font-family:var(--sans); font-size:13.5px; color:var(--text);
   outline:none; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
   -webkit-appearance: none;
 }
-.field input[type="text"]::placeholder,
-.field input[type="password"]::placeholder { color:#c0b09a; }
-.field input[type="text"]:focus,
-.field input[type="password"]:focus {
+.field input::placeholder { color:#c0b09a; }
+.field input:focus {
   background:#fff; border-color:var(--gold);
   box-shadow:0 0 0 3px rgba(200,134,42,0.12);
 }
 
-/* WTForms error messages */
-.field .errors,
-.field-errors {
-  list-style: none;
-  margin-top: 6px;
+/* strength indicator bar */
+.pw-strength { display:flex; gap:4px; margin-top:7px; }
+.pw-strength span {
+  flex:1; height:3px; border-radius:2px;
+  background: var(--border); transition: background 0.3s;
 }
-.field .errors li,
-.field-errors li,
-.error-msg {
-  font-size: 11.5px;
-  color: #c0392b;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-top: 4px;
-}
-.field .errors li::before,
-.field-errors li::before,
-.error-msg::before {
-  content: '!';
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px; height: 14px;
-  background: #c0392b;
-  color: #fff;
-  border-radius: 50%;
-  font-size: 9px;
-  font-weight: 700;
-  flex-shrink: 0;
-}
+.strength-1 .pw-strength span:nth-child(1) { background: #c0392b; }
+.strength-2 .pw-strength span:nth-child(-n+2) { background: #e67e22; }
+.strength-3 .pw-strength span:nth-child(-n+3) { background: #f1c40f; }
+.strength-4 .pw-strength span { background: #27ae60; }
+
+/* match indicator */
+.pw-match { font-size:11px; margin-top:6px; display:flex; align-items:center; gap:5px; min-height:16px; color:var(--muted); }
+.pw-match.match   { color:#27ae60; }
+.pw-match.nomatch { color:#c0392b; }
 
 .pw-toggle {
-  position:absolute; right:13px; top:50%; transform:translateY(-50%);
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
   background:none; border:none; cursor:pointer; color:var(--muted);
   padding:4px; line-height:0; border-radius:4px; transition:color 0.2s;
 }
 .pw-toggle:hover { color:var(--gold); }
 
-/* ── Remember me row ── */
-.meta-row { display:flex; justify-content:space-between; align-items:center; margin:8px 0 26px; }
-
-/* Style WTForms checkbox */
-.remember-wrap { display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
-.remember-wrap input[type="checkbox"] {
-  appearance: none; -webkit-appearance: none;
-  width:17px; height:17px;
-  border:1px solid var(--border-lt); border-radius:4px;
-  background:#faf6ee; cursor:pointer;
-  transition: all 0.15s; flex-shrink:0;
-  position: relative;
+/* error messages */
+.field .errors { list-style:none; margin-top:5px; }
+.field .errors li {
+  font-size:11.5px; color:#c0392b;
+  display:flex; align-items:center; gap:5px; margin-top:3px;
 }
-.remember-wrap input[type="checkbox"]:checked {
-  background: var(--gold); border-color: var(--gold);
+.field .errors li::before {
+  content:'!'; display:inline-flex; align-items:center; justify-content:center;
+  width:14px; height:14px; background:#c0392b; color:#fff;
+  border-radius:50%; font-size:9px; font-weight:700; flex-shrink:0;
 }
-.remember-wrap input[type="checkbox"]:checked::after {
-  content:''; position:absolute;
-  top:3px; left:4px;
-  width:7px; height:4px;
-  border-left:2px solid #fff; border-bottom:2px solid #fff;
-  transform:rotate(-45deg);
-}
-.remember-wrap label { font-size:12.5px; color:var(--muted); font-weight:300; cursor:pointer; }
 
-.forgot { font-size:12.5px; color:var(--gold-dim); text-decoration:none; font-weight:400; transition:color 0.2s; }
-.forgot:hover { color:var(--gold); }
-
-/* ── Submit button ── */
-input[type="submit"].btn-primary,
-button.btn-primary {
+/* submit */
+input[type="submit"].btn-primary {
   width:100%; padding:14px;
   background: var(--text); color: #faf6ee;
   font-family:var(--sans); font-size:13.5px; font-weight:600;
   letter-spacing:0.1em; text-transform:uppercase;
   border:none; border-radius:9px; cursor:pointer;
-  position:relative; overflow:hidden;
+  margin-top:8px;
   transition:background 0.2s, transform 0.1s, box-shadow 0.2s;
   box-shadow:0 4px 16px rgba(26,18,9,0.2);
-  display: block; text-align: center;
+  display: block;
 }
-input[type="submit"].btn-primary:hover,
-button.btn-primary:hover { background:#2e2010; box-shadow:0 6px 24px rgba(26,18,9,0.3); }
-input[type="submit"].btn-primary:active,
-button.btn-primary:active { transform:scale(0.98); }
+input[type="submit"].btn-primary:hover { background:#2e2010; box-shadow:0 6px 24px rgba(26,18,9,0.3); }
+input[type="submit"].btn-primary:active { transform:scale(0.98); }
 
-.sep { display:flex; align-items:center; gap:12px; margin:22px 0; font-size:11px; letter-spacing:0.12em; text-transform:uppercase; color:#c0b09a; }
-.sep::before, .sep::after { content:''; flex:1; height:1px; background:var(--border); }
-
-.card-footer { text-align:center; margin-top:24px; font-size:13px; color:var(--muted); font-weight:300; }
+.card-footer { text-align:center; margin-top:20px; font-size:13px; color:var(--muted); font-weight:300; }
 .card-footer a { color:var(--gold); text-decoration:none; font-weight:500; border-bottom:1px solid var(--gold); padding-bottom:1px; transition:opacity 0.2s; }
 .card-footer a:hover { opacity:0.8; }
 
-/* Flash messages */
-.flash { padding:11px 14px; border-radius:8px; font-size:13px; margin-bottom:20px; display:flex; align-items:flex-start; gap:8px; }
-.flash-error { background:#fdf0ee; border:1px solid #e8c4be; color:#9b2b1f; }
+/* flash messages */
+.flash { padding:11px 14px; border-radius:8px; font-size:13px; margin-bottom:18px; display:flex; align-items:flex-start; gap:8px; }
+.flash-error   { background:#fdf0ee; border:1px solid #e8c4be; color:#9b2b1f; }
 .flash-success { background:#eef6f0; border:1px solid #b8ddc0; color:#1f6b36; }
-.flash-info { background:#f0f4fd; border:1px solid #becde8; color:#1f3e7a; }
 
 @media (max-width: 780px) {
   .left { display:none; }
-  .right { padding:32px 24px; }
-  .card { padding:36px 28px; }
+  .right { padding:28px 20px; }
+  .card { padding:32px 24px; }
+  .field-grid { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -322,21 +287,29 @@ button.btn-primary:active { transform:scale(0.98); }
         </div>
         <span class="logo-name">Folio</span>
       </div>
-      <p class="big-quote">"A reader lives a <strong>thousand lives</strong> before he dies."</p>
-      <p class="attr">— George R.R. Martin</p>
+      <p class="big-quote">"Not all those who <strong>wander</strong> are lost — but all who read are found."</p>
+      <p class="attr">— Inspired by J.R.R. Tolkien</p>
       <div class="divider-line"></div>
-      <p class="tagline">Discover, discuss, and curate the books that move you. A home for readers who take literature seriously.</p>
+      <p class="tagline">Join thousands of readers sharing honest reviews, building shelves, and discovering their next favourite book.</p>
     </div>
   </div>
 
   <!-- RIGHT -->
   <div class="right">
     <div class="card">
-      <p class="card-eyebrow">Welcome back</p>
-      <h1 class="card-title">Sign <em>in</em></h1>
-      <p class="card-sub">Continue your reading journey.</p>
+      <p class="card-eyebrow">Get started</p>
+      <h1 class="card-title">Create <em>account</em></h1>
+      <p class="card-sub">Your next great read is waiting.</p>
 
-      <form action="" method="post" novalidate>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form action="" method="post">
         {{ form.hidden_tag() }}
 
         {# Username #}
@@ -344,69 +317,127 @@ button.btn-primary:active { transform:scale(0.98); }
           {{ form.username.label }}
           <div class="input-wrap">
             <span class="input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.866 3.582-7 8-7s8 3.134 8 7"/>
               </svg>
             </span>
             {{ form.username(placeholder="your_username", autocomplete="username") }}
           </div>
           {% if form.username.errors %}
-            <ul class="errors">
-              {% for error in form.username.errors %}<li>{{ error }}</li>{% endfor %}
-            </ul>
+            <ul class="errors">{% for e in form.username.errors %}<li>{{ e }}</li>{% endfor %}</ul>
           {% endif %}
         </div>
 
-        {# Password #}
+        {# Email #}
         <div class="field">
-          {{ form.password.label }}
+          {{ form.email.label }}
           <div class="input-wrap">
             <span class="input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/>
               </svg>
             </span>
-            {{ form.password(placeholder="••••••••", autocomplete="current-password", id="password") }}
-            <button class="pw-toggle" type="button" onclick="togglePw()" aria-label="Show/hide password">
-              <svg id="eye-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-              </svg>
-            </button>
+            {{ form.email(placeholder="you@example.com", autocomplete="email") }}
           </div>
-          {% if form.password.errors %}
-            <ul class="errors">
-              {% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}
-            </ul>
+          {% if form.email.errors %}
+            <ul class="errors">{% for e in form.email.errors %}<li>{{ e }}</li>{% endfor %}</ul>
           {% endif %}
         </div>
 
-        {# Remember me + forgot password #}
-        <div class="meta-row">
-          <div class="remember-wrap">
-            {{ form.remember_me() }}
-            {{ form.remember_me.label }}
-          </div>
-          <a href="#" class="forgot">Forgot password?</a>
-        </div>
+        {# Password pair — side by side #}
+        <div class="field-grid">
 
-        {# Submit #}
+          <div class="field" id="pw-field">
+            {{ form.password.label }}
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+              {{ form.password(placeholder="••••••••", autocomplete="new-password", id="password", oninput="checkStrength(this.value); checkMatch()") }}
+              <button class="pw-toggle" type="button" onclick="togglePw('password','eye1')" aria-label="Toggle password">
+                <svg id="eye1" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <div class="pw-strength" id="strength-bar">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            {% if form.password.errors %}
+              <ul class="errors">{% for e in form.password.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+            {% endif %}
+          </div>
+
+          <div class="field">
+            {{ form.password2.label }}
+            <div class="input-wrap">
+              <span class="input-icon">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </span>
+              {{ form.password2(placeholder="••••••••", autocomplete="new-password", id="password2", oninput="checkMatch()") }}
+              <button class="pw-toggle" type="button" onclick="togglePw('password2','eye2')" aria-label="Toggle confirm password">
+                <svg id="eye2" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <div class="pw-match" id="pw-match"></div>
+            {% if form.password2.errors %}
+              <ul class="errors">{% for e in form.password2.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+            {% endif %}
+          </div>
+
+        </div>{# /field-grid #}
+
         {{ form.submit(class="btn-primary") }}
 
       </form>
 
-      <p class="card-footer">New to Folio? <a href="{{ url_for('register') }}">Create an account</a></p>
+      <p class="card-footer">Already have an account? <a href="#">Sign in</a></p>
     </div>
   </div>
 
 </div>
 <script>
-  let shown = false;
-  function togglePw() {
-    shown = !shown;
-    document.getElementById('password').type = shown ? 'text' : 'password';
-    document.getElementById('eye-icon').innerHTML = shown
+  // Toggle password visibility
+  function togglePw(inputId, iconId) {
+    const inp = document.getElementById(inputId);
+    const icon = document.getElementById(iconId);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    icon.innerHTML = show
       ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>`
       : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  }
+
+  // Password strength checker
+  function checkStrength(val) {
+    const bar = document.getElementById('pw-field');
+    let score = 0;
+    if (val.length >= 8)              score++;
+    if (/[A-Z]/.test(val))            score++;
+    if (/[0-9]/.test(val))            score++;
+    if (/[^A-Za-z0-9]/.test(val))     score++;
+    bar.className = 'field' + (val.length ? ' strength-' + score : '');
+  }
+
+  // Password match checker
+  function checkMatch() {
+    const p1  = document.getElementById('password').value;
+    const p2  = document.getElementById('password2').value;
+    const el  = document.getElementById('pw-match');
+    if (!p2) { el.textContent = ''; el.className = 'pw-match'; return; }
+    if (p1 === p2) {
+      el.className = 'pw-match match';
+      el.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Passwords match`;
+    } else {
+      el.className = 'pw-match nomatch';
+      el.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Doesn't match`;
+    }
   }
 </script>
 </body>

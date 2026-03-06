@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <p>Hi, {{writer.name}}</p>
-
-    {% for book in books %}
-        <p>
-            <b>{{book.author.name}} wrote {{book.ti}}</b>
-        </p>
+    <h1>Hi, {{ current_user.username }}</h1>
+    {% for post in posts %}
+    <div>
+        <p>post.author.username says <b>{{ post.body }}</b></p>
+    </div>
     {% endfor %}
 {% endblock %}
