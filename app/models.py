@@ -33,16 +33,26 @@ class Author(db.Model):
 
 class Book(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    title: so.Mapped[str] = so.mapped_column(sa.String(60))
-    posts: so.WriteOnlyMapped['Post'] = so.relationship(back_populates='book')
-    author_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Author.id), index=True)
-    author_referenced: so.Mapped[Author] = so.relationship(back_populates='books')
+    title: so.Mapped[str] = so.mapped_column(sa.String(200), nullable=False)
+    author: so.Mapped[str] = so.mapped_column(sa.String(200), nullable=False)
+    genre: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
+    year: so.Mapped[Optional[int]] = so.mapped_column(sa.Integer)
+    description: so.Mapped[Optional[str]] = so.mapped_column(sa.String(500))
+    timestamp: so.Mapped[datetime] = so.mapped_column(
+        index=True, default=lambda: datetime.now(timezone.utc))
+    added_by: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
+
+    added_by_user: so.Mapped[User] = so.relationship(back_populates='books')
+
+    def __repr__(self):
+        return '<Book {} by {}>'.format(self.title, self.author)
+
 
 class Post(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     body: so.Mapped[str] = so.mapped_column(sa.String(300))
-    timestamp: so.Mapped[datetime] = so.mapped_column(index=True, default=lambda: datetime.now(timezone.utc))
+    timestamp: so.Mapped[datetime] = so.mapped_column(
+        index=True, default=lambda: datetime.now(timezone.utc))
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
-    book_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Book.id), index=True)
-    uploader: so.Mapped[User] = so.relationship(back_populates='posts')
-    book: so.Mapped[Book] = so.relationship(back_populates='posts')
+
+    author: so.Mapped[User] = so.relationship(back_populates='posts')

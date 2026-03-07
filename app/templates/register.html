@@ -179,7 +179,7 @@ html, body { height: 100%; font-family: var(--sans); background: var(--bg); colo
   border:1px solid var(--border-lt); border-radius:9px;
   font-family:var(--sans); font-size:13.5px; color:var(--text);
   outline:none; transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
-  -webkit-appearance: none;
+  appearance: none;
 }
 .field input::placeholder { color:#c0b09a; }
 .field input:focus {
@@ -301,13 +301,6 @@ input[type="submit"].btn-primary:active { transform:scale(0.98); }
       <h1 class="card-title">Create <em>account</em></h1>
       <p class="card-sub">Your next great read is waiting.</p>
 
-      {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="flash flash-{{ category }}">{{ message }}</div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
 
       <form action="" method="post">
         {{ form.hidden_tag() }}

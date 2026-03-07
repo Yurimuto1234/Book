@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, IntegerField, SelectField
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Optional, NumberRange, Length
 import sqlalchemy as sa
 from app import db
 from app.models import User
@@ -11,6 +11,31 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
+class AddBookForm(FlaskForm):
+    title = StringField('Book Title', validators=[DataRequired(), Length(max=200)])
+    author = StringField('Author', validators=[DataRequired(), Length(max=200)])
+    genre = SelectField('Genre', choices=[
+        ('', '— Select a genre —'),
+        ('Fiction', 'Fiction'),
+        ('Non-Fiction', 'Non-Fiction'),
+        ('Science Fiction', 'Science Fiction'),
+        ('Fantasy', 'Fantasy'),
+        ('Mystery', 'Mystery'),
+        ('Thriller', 'Thriller'),
+        ('Romance', 'Romance'),
+        ('Poetry', 'Poetry'),
+        ('Biography', 'Biography'),
+        ('History', 'History'),
+        ('Self-Help', 'Self-Help'),
+        ('Other', 'Other'),
+    ], validators=[DataRequired(message='Please select a genre.')])
+    year = IntegerField('Year Published', validators=[
+        Optional(),
+        NumberRange(min=1, max=2100, message='Enter a valid year.')
+    ])
+    description = TextAreaField('Description', validators=[Optional(), Length(max=500)])
+    submit = SubmitField('Add Book')
+    
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
