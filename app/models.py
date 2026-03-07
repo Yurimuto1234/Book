@@ -37,7 +37,8 @@ class Book(db.Model):
     genre: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))
     year: so.Mapped[Optional[int]] = so.mapped_column(sa.Integer)
     description: so.Mapped[Optional[str]] = so.mapped_column(sa.String(500))
-    cover_filename: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))  # NEW
+    cover_data: so.Mapped[Optional[bytes]] = so.mapped_column(sa.LargeBinary)
+    cover_mimetype: so.Mapped[Optional[str]] = so.mapped_column(sa.String(32))
     timestamp: so.Mapped[datetime] = so.mapped_column(
         index=True, default=lambda: datetime.now(timezone.utc))
     added_by: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
@@ -56,5 +57,3 @@ class Post(db.Model):
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
 
     author: so.Mapped[User] = so.relationship(back_populates='posts')
-
-
