@@ -1,10 +1,10 @@
 from flask import render_template, flash, redirect, url_for
 from app import app
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, AddBookForm
 from flask_login import current_user, login_user
 import sqlalchemy as sa
 from app import db
-from app.models import User
+from app.models import User, Book
 from flask_login import logout_user, login_required
 from flask import request
 from urllib.parse import urlsplit
@@ -20,7 +20,7 @@ def index():
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect([url_for('index')])
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
         user = db.session.scalar(
@@ -54,3 +54,22 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
+
+@app.route('/add_book', methods=['GET', 'POST'])
+@login_required
+def add_book():
+    form = AddBookForm()
+    if form.validate_on_submit():
+        book = Book(
+            title=form.title.data,
+            author=form.author.data,
+            genre=form.genre.data or None,
+            year=form.year.data,
+            description=form.description.data or None,
+            added_by=current_user.id
+        )
+        db.session.add(book)
+        db.session.commit()
+        flash('Book added successfully!')
+        return redirect(url_for('index'))
+    return render_template('add_book.html', title='Add Book', form=form)
