@@ -246,15 +246,15 @@
             <div class="book-row" data-genre="{{ book.genre or '' }}">
 
                 {# Show uploaded cover if available, else colored spine tile #}
-                {% if book.cover_filename %}
+                {% if book.cover_data %}
                     <img
                         class="cover-img"
-                        src="{{ url_for('static', filename='covers/' + book.cover_filename) }}"
+                        src="{{ url_for('book_cover', book_id=book.id) }}"
                         alt="Cover of {{ book.title }}"
                         loading="lazy"
                     >
                 {% else %}
-                    <div class="spine" style="background: {{ color }};">
+                    <div class="spine" style="background: {{ color }}; ">
                         {{ book.title[0].upper() }}
                     </div>
                 {% endif %}

@@ -8,7 +8,6 @@
         {% else %}
             <title>Book Reviews</title>
         {% endif %}
-		<link rel="icon" type="image/x-icon" href="C:\Users\tongt\OneDrive\Hình ảnh\Screenshots\Screenshot 2026-02-19 211617.png">
 		<style>
 			:root{
 				--bg:#ffffff;
@@ -47,7 +46,7 @@
 				.dropdown-menu{position:static;border:0;box-shadow:none;padding-left:0}
 			}
 
-			main{padding:2rem}
+			main{padding:0}
 			.hero{max-width:900px;margin:0 auto}
 			h1{margin:0 0 0.5rem 0}
 			p.lead{color:var(--muted)}
@@ -72,7 +71,7 @@
 
 				<div id="primary-navigation" class="nav-links">
 					<a href="{{ url_for('index') }}" class = "nav_but">Home</a>
-					<a href="#reviews" class = "nav_but">Reviews</a>
+					<a href="{{ url_for('add_book') }}" class = "nav_but">Add Books</a>
 					<div class="dropdown">
 						<a href="#categories" class="dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">Categories</a>
 						<div class="dropdown-menu" role="menu" aria-label="Categories Menu">
@@ -127,5 +126,8 @@
 		</script>
 
 		<hr>
+		<main>
+			{% block content %}{% endblock %}
+		</main>
 	</body>
 </html>
