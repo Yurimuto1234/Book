@@ -29,10 +29,6 @@ class User(UserMixin, db.Model):
 def load_user(id):
     return db.session.get(User, int(id))
 
-class Author(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    name: so.Mapped[str] = so.mapped_column(sa.String(30))
-    books: so.WriteOnlyMapped['Book'] = so.relationship(back_populates='author_referenced')
 
 class Book(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
