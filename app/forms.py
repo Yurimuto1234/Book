@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileField, FileAllowed, FileSize
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField, IntegerField, SelectField
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Optional, NumberRange, Length
 import sqlalchemy as sa
@@ -34,8 +35,12 @@ class AddBookForm(FlaskForm):
         NumberRange(min=1, max=2100, message='Enter a valid year.')
     ])
     description = TextAreaField('Description', validators=[Optional(), Length(max=500)])
+    cover = FileField('Book Cover', validators=[
+        Optional(),
+        FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only — JPG, PNG or WEBP.'),
+    ])
     submit = SubmitField('Add Book')
-    
+
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])

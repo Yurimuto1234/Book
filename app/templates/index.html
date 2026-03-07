@@ -89,7 +89,7 @@
         grid-template-columns: 52px 1fr auto;
         align-items: center;
         gap: 1.25rem;
-        padding: 1rem 0.6rem;
+        padding: 0.9rem 0.6rem;
         border-bottom: 1px solid #ece8e1;
         border-radius: 3px;
         transition: background 0.15s;
@@ -97,7 +97,18 @@
     }
     .book-row:hover { background: #faf8f5; }
 
-    /* Coloured spine tile */
+    /* Cover image — real photo */
+    .cover-img {
+        width: 44px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 3px;
+        flex-shrink: 0;
+        box-shadow: 2px 2px 6px rgba(0,0,0,0.18);
+        display: block;
+    }
+
+    /* Coloured spine tile fallback */
     .spine {
         width: 44px;
         height: 64px;
@@ -234,9 +245,19 @@
             {% set color = spine_colors[loop.index0 % spine_colors|length] %}
             <div class="book-row" data-genre="{{ book.genre or '' }}">
 
-                <div class="spine" style="background: {{ color }};">
-                    {{ book.title[0].upper() }}
-                </div>
+                {# Show uploaded cover if available, else colored spine tile #}
+                {% if book.cover_filename %}
+                    <img
+                        class="cover-img"
+                        src="{{ url_for('static', filename='covers/' + book.cover_filename) }}"
+                        alt="Cover of {{ book.title }}"
+                        loading="lazy"
+                    >
+                {% else %}
+                    <div class="spine" style="background: {{ color }};">
+                        {{ book.title[0].upper() }}
+                    </div>
+                {% endif %}
 
                 <div class="book-info">
                     <p class="book-title">{{ book.title }}</p>
