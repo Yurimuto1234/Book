@@ -1,0 +1,954 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap');
+
+:root {
+    --gold:        #c8862a;
+    --gold-dim:    #8a6020;
+    --gold-pale:   rgba(200,134,42,0.12);
+    --folio-bg:    #faf6ee;
+    --folio-dark:  #1a1209;
+    --folio-border:#e0d5c0;
+    --folio-muted: #8a7d6a;
+    --red:         #c0392b;
+    --serif:       'Playfair Display', Georgia, serif;
+    --serif2:      'Cormorant Garamond', Georgia, serif;
+    --lora:        'Lora', Georgia, serif;
+    --sans:        'Outfit', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Page layout ── */
+.detail-page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+    font-family: var(--sans);
+}
+
+/* ── Back link ── */
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--folio-muted);
+    text-decoration: none;
+    margin-bottom: 2.5rem;
+    transition: color 0.2s;
+}
+.back-link:hover { color: var(--folio-dark); }
+.back-link svg { transition: transform 0.2s; }
+.back-link:hover svg { transform: translateX(-3px); }
+
+/* ══════════════════════════════
+   HERO SECTION
+══════════════════════════════ */
+.book-hero {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 3rem;
+    margin-bottom: 3.5rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid var(--folio-border);
+}
+
+/* Cover */
+.hero-cover-wrap {
+    position: relative;
+}
+.hero-cover {
+    width: 200px;
+    height: 290px;
+    border-radius: 4px 10px 10px 4px;
+    object-fit: cover;
+    display: block;
+    box-shadow:
+        4px 0 12px rgba(26,18,9,0.25),
+        8px 4px 30px rgba(26,18,9,0.18),
+        inset 0 0 0 1px rgba(255,255,255,0.08);
+}
+.hero-spine {
+    width: 200px;
+    height: 290px;
+    border-radius: 4px 10px 10px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 3.5rem;
+    font-style: italic;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    box-shadow:
+        4px 0 12px rgba(26,18,9,0.25),
+        8px 4px 30px rgba(26,18,9,0.18);
+    position: relative;
+    overflow: hidden;
+}
+.hero-spine::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 8px; height: 100%;
+    background: rgba(0,0,0,0.3);
+}
+.hero-spine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.1) 100%);
+}
+
+/* Rating badge on cover */
+.cover-rating-badge {
+    position: absolute;
+    bottom: -12px;
+    right: -12px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--folio-dark);
+    border: 3px solid var(--folio-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(26,18,9,0.3);
+    z-index: 2;
+}
+.badge-score {
+    font-family: var(--serif2);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+}
+.badge-label {
+    font-size: 7px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+}
+
+/* Hero text */
+.hero-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 0.5rem;
+}
+.hero-genre-year {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+}
+.genre-pill {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    border: 1px solid rgba(192,57,43,0.3);
+    border-radius: 999px;
+    padding: 3px 11px;
+    background: rgba(192,57,43,0.06);
+}
+.year-chip {
+    font-family: var(--lora);
+    font-size: 12px;
+    color: var(--folio-muted);
+}
+.dot-sep { color: var(--folio-border); font-size: 10px; }
+
+.hero-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--folio-dark);
+    margin: 0 0 0.5rem;
+}
+.hero-author {
+    font-family: var(--lora);
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--folio-muted);
+    margin: 0 0 1.5rem;
+}
+.hero-author strong {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--folio-dark);
+}
+
+/* Stars row */
+.stars-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+.stars {
+    display: flex;
+    gap: 3px;
+}
+.star {
+    font-size: 18px;
+    color: var(--folio-border);
+    transition: color 0.15s;
+}
+.star.filled { color: var(--gold); }
+.star.half   { color: var(--gold); opacity: 0.55; }
+.rating-summary {
+    font-family: var(--lora);
+    font-size: 13px;
+    color: var(--folio-muted);
+}
+.rating-summary strong {
+    font-weight: 500;
+    color: var(--folio-dark);
+}
+
+/* Description */
+.hero-description {
+    font-family: var(--lora);
+    font-size: 0.92rem;
+    line-height: 1.8;
+    color: #5a5040;
+    max-width: 560px;
+    margin: 0 0 1.75rem;
+    border-left: 2px solid var(--gold);
+    padding-left: 1rem;
+}
+
+/* Meta chips */
+.meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--folio-muted);
+    background: #fff;
+    border: 1px solid var(--folio-border);
+    border-radius: 6px;
+    padding: 5px 11px;
+    font-family: var(--sans);
+}
+.meta-chip svg { flex-shrink: 0; color: var(--gold-dim); }
+
+/* ══════════════════════════════
+   TWO-COLUMN BODY
+══════════════════════════════ */
+.detail-body {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 3rem;
+    align-items: start;
+}
+
+/* ── Reviews column ── */
+.reviews-col {}
+.section-eyebrow {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 1.25rem;
+}
+.section-eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--folio-border);
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.review-card {
+    background: #fff;
+    border: 1px solid var(--folio-border);
+    border-radius: 12px;
+    padding: 1.4rem 1.5rem;
+    position: relative;
+    transition: box-shadow 0.2s;
+    animation: fadeUp 0.4s ease both;
+}
+.review-card:hover {
+    box-shadow: 0 6px 24px rgba(26,18,9,0.08);
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Gold accent on own review */
+.review-card.own-review::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 16px; right: 16px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 1px;
+}
+
+.review-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 0.85rem;
+    gap: 0.75rem;
+}
+.reviewer-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.reviewer-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--folio-dark);
+    color: #faf6ee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif2);
+    font-size: 14px;
+    font-style: italic;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.reviewer-avatar.own { background: var(--gold); }
+.reviewer-name {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--folio-dark);
+    line-height: 1.2;
+}
+.reviewer-date {
+    font-size: 11px;
+    color: var(--folio-muted);
+    font-family: var(--lora);
+}
+.own-tag {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    background: var(--gold-pale);
+    border: 1px solid rgba(200,134,42,0.25);
+    border-radius: 4px;
+    padding: 2px 7px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.review-stars {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 0.7rem;
+}
+.review-stars .star { font-size: 13px; }
+
+.review-body {
+    font-family: var(--lora);
+    font-size: 0.875rem;
+    line-height: 1.8;
+    color: #4a4030;
+}
+
+/* Empty reviews */
+.no-reviews {
+    text-align: center;
+    padding: 3rem 1rem;
+    border: 1.5px dashed var(--folio-border);
+    border-radius: 12px;
+    font-family: var(--lora);
+    color: var(--folio-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2.5rem;
+}
+.no-reviews .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+/* ── Write review sidebar ── */
+.review-sidebar {
+    position: sticky;
+    top: 24px;
+}
+
+.form-card {
+    background: #fff;
+    border: 1px solid var(--folio-border);
+    border-radius: 14px;
+    padding: 1.75rem 1.5rem;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(26,18,9,0.06);
+}
+.form-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 15%; right: 15%; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 1px;
+}
+
+.form-card-title {
+    font-family: var(--serif2);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--folio-dark);
+    margin: 0 0 0.35rem;
+}
+.form-card-title em { font-style: italic; font-weight: 300; }
+.form-card-sub {
+    font-size: 12px;
+    color: var(--folio-muted);
+    margin: 0 0 1.5rem;
+    font-family: var(--lora);
+    font-style: italic;
+}
+
+/* Form fields */
+.f-field { margin-bottom: 1.1rem; }
+.f-field label {
+    display: block;
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--folio-muted);
+    margin-bottom: 7px;
+    transition: color 0.2s;
+    font-family: var(--sans);
+}
+.f-field:focus-within label { color: var(--gold); }
+
+/* Star-picker */
+.star-picker {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 0.35rem;
+}
+.star-picker input[type="radio"] { display: none; }
+.star-picker label {
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--folio-border);
+    transition: color 0.12s, transform 0.1s;
+    user-select: none;
+    letter-spacing: 0;
+    text-transform: none;
+    font-weight: normal;
+    margin-bottom: 0;
+    line-height: 1;
+    padding: 0;
+}
+.star-picker label:hover,
+.star-picker label:hover ~ label,
+.star-picker input:checked ~ label { color: var(--folio-border); }
+
+.star-picker input:checked + label,
+.star-picker label:hover { color: var(--gold) !important; transform: scale(1.15); }
+
+/* Reverse trick for CSS-only star highlight */
+.star-picker {
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+}
+.star-picker label:hover,
+.star-picker label:hover ~ label { color: var(--gold) !important; }
+
+.f-field select,
+.f-field textarea {
+    width: 100%;
+    font-family: var(--sans);
+    font-size: 13.5px;
+    color: var(--folio-dark);
+    background: var(--folio-bg);
+    border: 1px solid #ddd2bc;
+    border-radius: 9px;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+}
+.f-field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='%238a7d6a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+    cursor: pointer;
+}
+.f-field select:focus,
+.f-field textarea:focus {
+    border-color: var(--gold);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(200,134,42,0.12);
+}
+.f-field textarea { resize: vertical; min-height: 110px; line-height: 1.7; }
+
+.char-counter {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 10.5px;
+    color: #c0b09a;
+    margin-top: 4px;
+    transition: color 0.2s;
+    font-family: var(--sans);
+}
+.char-counter.warn { color: var(--red); }
+
+.field-errors {
+    list-style: none;
+    margin-top: 5px;
+    padding: 0;
+}
+.field-errors li {
+    font-size: 11px;
+    color: var(--red);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 3px;
+    font-family: var(--sans);
+}
+.field-errors li::before {
+    content: '!';
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 13px; height: 13px;
+    background: var(--red); color: #fff;
+    border-radius: 50%;
+    font-size: 8px; font-weight: 700;
+    flex-shrink: 0;
+}
+
+.btn-review {
+    width: 100%;
+    padding: 13px;
+    background: var(--folio-dark);
+    color: var(--folio-bg);
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    margin-top: 6px;
+    transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(26,18,9,0.18);
+    display: block;
+}
+.btn-review:hover { background: #2e2010; box-shadow: 0 6px 22px rgba(26,18,9,0.25); }
+.btn-review:active { transform: scale(0.98); }
+
+/* Already reviewed notice */
+.already-reviewed {
+    text-align: center;
+    padding: 1.25rem 1rem;
+    background: rgba(200,134,42,0.07);
+    border: 1px solid rgba(200,134,42,0.22);
+    border-radius: 10px;
+}
+.already-reviewed .check-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(200,134,42,0.15);
+    border: 1px solid rgba(200,134,42,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    margin: 0 auto 0.75rem;
+}
+.already-reviewed p {
+    font-size: 13px;
+    color: var(--folio-muted);
+    font-family: var(--lora);
+    font-style: italic;
+    margin: 0;
+    line-height: 1.6;
+}
+.already-reviewed strong {
+    display: block;
+    font-family: var(--sans);
+    font-size: 12.5px;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--gold-dim);
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+/* Flash toast */
+.flash-toast {
+    position: fixed;
+    bottom: 32px; left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--folio-dark);
+    color: #faf6ee;
+    font-family: var(--sans);
+    font-size: 13px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    z-index: 300;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    white-space: nowrap;
+}
+.flash-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Rating distribution bar */
+.rating-dist {
+    margin-bottom: 1.75rem;
+}
+.rating-dist-title {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--folio-muted);
+    margin-bottom: 0.75rem;
+    font-family: var(--sans);
+}
+.dist-row {
+    display: grid;
+    grid-template-columns: 14px 1fr 28px;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+.dist-label {
+    font-size: 11px;
+    color: var(--folio-muted);
+    font-family: var(--sans);
+    text-align: right;
+}
+.dist-bar-wrap {
+    height: 6px;
+    background: var(--folio-border);
+    border-radius: 999px;
+    overflow: hidden;
+}
+.dist-bar-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 999px;
+    transition: width 0.6s cubic-bezier(0.22,1,0.36,1);
+}
+.dist-count {
+    font-size: 10px;
+    color: #c0b09a;
+    font-family: var(--sans);
+    text-align: right;
+}
+
+/* Responsive */
+@media (max-width: 780px) {
+    .book-hero {
+        grid-template-columns: 140px 1fr;
+        gap: 1.5rem;
+    }
+    .hero-cover, .hero-spine { width: 140px; height: 200px; }
+    .detail-body {
+        grid-template-columns: 1fr;
+    }
+    .review-sidebar { position: static; }
+}
+@media (max-width: 520px) {
+    .book-hero { grid-template-columns: 1fr; }
+    .hero-cover-wrap, .hero-cover, .hero-spine { width: 100%; }
+    .hero-cover { height: 240px; }
+    .hero-spine { height: 240px; }
+}
+</style>
+
+{% set spine_colors = ['#2c3e50','#8b3a3a','#2e5339','#5d4037','#1a4f72','#6d4c8b','#7b4f3a','#1b6b5a'] %}
+{% set color = spine_colors[book.id % spine_colors|length] %}
+
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        {% for msg in messages %}
+            <div class="flash-toast" id="flash-toast">{{ msg }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+
+<div class="detail-page">
+
+    <a href="{{ url_for('index') }}" class="back-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to catalog
+    </a>
+
+    <!-- ══ HERO ══ -->
+    <div class="book-hero">
+
+        <!-- Cover -->
+        <div class="hero-cover-wrap">
+            {% if book.cover_data %}
+                <img class="hero-cover" src="{{ url_for('book_cover', book_id=book.id) }}" alt="Cover of {{ book.title }}">
+            {% else %}
+                <div class="hero-spine" style="background: linear-gradient(160deg, {{ color }}, {{ color }}bb);">
+                    {{ book.title[0].upper() }}
+                </div>
+            {% endif %}
+
+            {% if book.avg_rating %}
+            <div class="cover-rating-badge">
+                <span class="badge-score">{{ book.avg_rating }}</span>
+                <span class="badge-label">/ 5</span>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Text -->
+        <div class="hero-text">
+            <div class="hero-genre-year">
+                {% if book.genre %}
+                    <span class="genre-pill">{{ book.genre }}</span>
+                {% endif %}
+                {% if book.year %}
+                    {% if book.genre %}<span class="dot-sep">·</span>{% endif %}
+                    <span class="year-chip">{{ book.year }}</span>
+                {% endif %}
+            </div>
+
+            <h1 class="hero-title">{{ book.title }}</h1>
+            <p class="hero-author">by <strong>{{ book.author }}</strong></p>
+
+            <!-- Stars summary -->
+            {% if book.avg_rating %}
+            <div class="stars-row">
+                <div class="stars">
+                    {% set avg = book.avg_rating %}
+                    {% for i in range(1, 6) %}
+                        {% if i <= avg|int %}
+                            <span class="star filled">★</span>
+                        {% elif i - 0.5 <= avg %}
+                            <span class="star half">★</span>
+                        {% else %}
+                            <span class="star">★</span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <span class="rating-summary">
+                    <strong>{{ book.avg_rating }}</strong> from
+                    {{ book.review_count }} review{{ 's' if book.review_count != 1 else '' }}
+                </span>
+            </div>
+            {% else %}
+            <div class="stars-row">
+                <div class="stars">
+                    {% for i in range(5) %}<span class="star">★</span>{% endfor %}
+                </div>
+                <span class="rating-summary">No reviews yet — be the first</span>
+            </div>
+            {% endif %}
+
+            {% if book.description %}
+            <p class="hero-description">{{ book.description }}</p>
+            {% endif %}
+
+            <div class="meta-chips">
+                <span class="meta-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4"/><path d="M4 20c0-3.866 3.582-7 8-7s8 3.134 8 7"/>
+                    </svg>
+                    Added by {{ book.added_by_user.username }}
+                </span>
+                <span class="meta-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                    {{ book.timestamp.strftime('%b %Y') }}
+                </span>
+                <span class="meta-chip">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    {{ book.review_count }} review{{ 's' if book.review_count != 1 else '' }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ BODY ══ -->
+    <div class="detail-body">
+
+        <!-- Reviews list -->
+        <div class="reviews-col">
+            <p class="section-eyebrow">Reader Reviews</p>
+
+            {% if reviews %}
+                <!-- Rating distribution -->
+                {% if book.review_count >= 2 %}
+                <div class="rating-dist">
+                    <div class="rating-dist-title">Rating breakdown</div>
+                    {% for star in [5,4,3,2,1] %}
+                        {% set count = reviews | selectattr('rating', 'equalto', star) | list | length %}
+                        {% set pct = (count / book.review_count * 100) | round | int %}
+                        <div class="dist-row">
+                            <span class="dist-label">{{ star }}</span>
+                            <div class="dist-bar-wrap">
+                                <div class="dist-bar-fill" style="width: {{ pct }}%"></div>
+                            </div>
+                            <span class="dist-count">{{ count }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="reviews-list">
+                    {% for review in reviews %}
+                    {% set is_own = (review.user_id == current_user.id) %}
+                    <div class="review-card {% if is_own %}own-review{% endif %}">
+                        <div class="review-header">
+                            <div class="reviewer-info">
+                                <div class="reviewer-avatar {% if is_own %}own{% endif %}">
+                                    {{ review.author.username[0].upper() }}
+                                </div>
+                                <div>
+                                    <div class="reviewer-name">{{ review.author.username }}</div>
+                                    <div class="reviewer-date">{{ review.timestamp.strftime('%B %d, %Y') }}</div>
+                                </div>
+                            </div>
+                            {% if is_own %}
+                                <span class="own-tag">Your review</span>
+                            {% endif %}
+                        </div>
+                        <div class="review-stars">
+                            {% for i in range(1, 6) %}
+                                <span class="star {% if i <= review.rating %}filled{% endif %}">★</span>
+                            {% endfor %}
+                        </div>
+                        <p class="review-body">{{ review.body }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            {% else %}
+                <div class="no-reviews">
+                    <div class="icon">✍️</div>
+                    <p>No reviews yet. Be the first to share your thoughts on <em>{{ book.title }}</em>.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Write review sidebar -->
+        <div class="review-sidebar">
+            <p class="section-eyebrow">Write a Review</p>
+
+            {% if existing_review %}
+                <!-- Already reviewed -->
+                <div class="form-card">
+                    <div class="already-reviewed">
+                        <div class="check-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <p>
+                            <strong>You've already reviewed this book</strong>
+                            Your thoughts are visible in the reviews panel.
+                        </p>
+                    </div>
+                </div>
+
+            {% else %}
+                <div class="form-card">
+                    <h2 class="form-card-title">Share your <em>thoughts</em></h2>
+                    <p class="form-card-sub">Your review helps other readers decide.</p>
+
+                    <form method="post" action="{{ url_for('book_detail', book_id=book.id) }}" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <!-- Rating -->
+                        <div class="f-field">
+                            {{ form.rating.label }}
+                            <div class="input-wrap">
+                                {{ form.rating(class="") }}
+                            </div>
+                            {% if form.rating.errors %}
+                                <ul class="field-errors">
+                                    {% for e in form.rating.errors %}<li>{{ e }}</li>{% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+
+                        <!-- Review body -->
+                        <div class="f-field">
+                            {{ form.body.label }}
+                            {{ form.body(
+                                placeholder="What did you think? Share your honest reaction…",
+                                id="review-body",
+                                rows="5",
+                                oninput="updateCounter()"
+                            ) }}
+                            <div class="char-counter" id="char-counter">0 / 2000</div>
+                            {% if form.body.errors %}
+                                <ul class="field-errors">
+                                    {% for e in form.body.errors %}<li>{{ e }}</li>{% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+
+                        {{ form.submit(class="btn-review") }}
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+
+    </div><!-- /detail-body -->
+</div><!-- /detail-page -->
+
+<script>
+    // Character counter
+    function updateCounter() {
+        const ta = document.getElementById('review-body');
+        const ct = document.getElementById('char-counter');
+        if (!ta || !ct) return;
+        const l = ta.value.length;
+        ct.textContent = l + ' / 2000';
+        ct.classList.toggle('warn', l > 1800);
+    }
+    updateCounter();
+
+    // Flash toast
+    const toast = document.getElementById('flash-toast');
+    if (toast) {
+        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+</script>
+{% endblock %}

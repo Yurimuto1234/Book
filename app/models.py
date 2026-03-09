@@ -15,6 +15,7 @@ class User(UserMixin, db.Model):
 
     posts: so.WriteOnlyMapped['Post'] = so.relationship(back_populates='author')
     books: so.WriteOnlyMapped['Book'] = so.relationship(back_populates='added_by_user')
+    reviews: so.WriteOnlyMapped['Review'] = so.relationship(back_populates='author')
 
     def __repr__(self):
         return '<User {} [{}]>'.format(self.username, self.role)
@@ -53,9 +54,21 @@ class Book(db.Model):
     added_by: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
 
     added_by_user: so.Mapped[User] = so.relationship(back_populates='books')
+    reviews: so.Mapped[list['Review']] = so.relationship(
+        back_populates='book', cascade='all, delete-orphan', lazy='selectin')
 
     def __repr__(self):
         return '<Book {} by {}>'.format(self.title, self.author)
+
+    @property
+    def avg_rating(self):
+        if not self.reviews:
+            return None
+        return round(sum(r.rating for r in self.reviews) / len(self.reviews), 1)
+
+    @property
+    def review_count(self):
+        return len(self.reviews)
 
 
 class Post(db.Model):
@@ -66,3 +79,19 @@ class Post(db.Model):
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
 
     author: so.Mapped[User] = so.relationship(back_populates='posts')
+
+
+class Review(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    body: so.Mapped[str] = so.mapped_column(sa.String(2000))
+    rating: so.Mapped[int] = so.mapped_column(sa.Integer)  # 1–5
+    timestamp: so.Mapped[datetime] = so.mapped_column(
+        index=True, default=lambda: datetime.now(timezone.utc))
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
+    book_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(Book.id), index=True)
+
+    author: so.Mapped[User] = so.relationship(back_populates='reviews')
+    book: so.Mapped[Book] = so.relationship(back_populates='reviews')
+
+    def __repr__(self):
+        return '<Review by {} on book {}>'.format(self.user_id, self.book_id)

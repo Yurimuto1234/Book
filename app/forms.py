@@ -60,3 +60,18 @@ class RegistrationForm(FlaskForm):
             User.email == email.data))
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+
+class ReviewForm(FlaskForm):
+    rating = SelectField('Rating', choices=[
+        ('5', '★★★★★  —  Masterpiece'),
+        ('4', '★★★★☆  —  Really good'),
+        ('3', '★★★☆☆  —  Decent'),
+        ('2', '★★☆☆☆  —  Disappointing'),
+        ('1', '★☆☆☆☆  —  Didn\'t work for me'),
+    ], validators=[DataRequired()])
+    body = TextAreaField('Your Review', validators=[
+        DataRequired(message='Please write something about the book.'),
+        Length(min=10, max=2000, message='Review must be between 10 and 2000 characters.')
+    ])
+    submit = SubmitField('Submit Review')
