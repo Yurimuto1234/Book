@@ -85,7 +85,7 @@
     .book-list { display: flex; flex-direction: column; }
     .book-row {
         display: grid;
-        grid-template-columns: 52px 1fr auto;
+        grid-template-columns: 52px 1fr auto 32px;
         align-items: center;
         gap: 1.25rem;
         padding: 0.9rem 0.6rem;
@@ -374,8 +374,103 @@
         transform: translateX(-50%) translateY(0);
     }
 
+    /* ── Delete button ── */
+    .btn-delete {
+        opacity: 0;
+        flex-shrink: 0;
+        width: 30px; height: 30px;
+        border-radius: 6px;
+        border: 1px solid #e8c4be;
+        background: #fff;
+        color: #c0392b;
+        cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        transition: opacity 0.15s, background 0.15s, border-color 0.15s, transform 0.1s;
+        padding: 0;
+    }
+    .book-row:hover .btn-delete { opacity: 1; }
+    .btn-delete:hover { background: #fdf0ee; border-color: #c0392b; transform: scale(1.08); }
+    .btn-delete:active { transform: scale(0.96); }
+
+    /* ── Confirm modal ── */
+    .modal-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(26,18,9,0.45);
+        backdrop-filter: blur(3px);
+        z-index: 400;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.25s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+
+    .modal {
+        position: fixed;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -48%) scale(0.96);
+        z-index: 401;
+        width: min(420px, calc(100vw - 40px));
+        background: #fff;
+        border: 1px solid var(--folio-border);
+        border-radius: 16px;
+        padding: 36px 36px 28px;
+        box-shadow: 0 20px 60px rgba(26,18,9,0.18);
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.25s, transform 0.25s cubic-bezier(0.22,1,0.36,1);
+    }
+    .modal::before {
+        content: '';
+        position: absolute; top: -1px; left: 15%; right: 15%; height: 2px;
+        background: linear-gradient(90deg, transparent, #c0392b, transparent);
+        border-radius: 1px;
+    }
+    .modal.open { opacity: 1; pointer-events: all; transform: translate(-50%, -50%) scale(1); }
+
+    .modal-icon {
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        background: #fdf0ee;
+        border: 1px solid #e8c4be;
+        display: flex; align-items: center; justify-content: center;
+        color: #c0392b;
+        margin-bottom: 16px;
+    }
+    .modal-title {
+        font-family: var(--serif-display);
+        font-size: 22px; font-weight: 600;
+        color: var(--folio-text);
+        margin: 0 0 8px;
+    }
+    .modal-body {
+        font-size: 13.5px; color: var(--folio-muted);
+        line-height: 1.6; margin: 0 0 28px;
+    }
+    .modal-body strong { color: var(--folio-text); font-weight: 600; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    .btn-modal-cancel {
+        padding: 10px 20px;
+        font-family: var(--sans); font-size: 12.5px; font-weight: 500;
+        letter-spacing: 0.06em;
+        background: transparent; color: var(--folio-muted);
+        border: 1px solid var(--folio-border); border-radius: 8px;
+        cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-modal-cancel:hover { border-color: #aaa; color: var(--folio-text); }
+
+    .btn-modal-delete {
+        padding: 10px 22px;
+        font-family: var(--sans); font-size: 12.5px; font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        background: #c0392b; color: #fff;
+        border: none; border-radius: 8px;
+        cursor: pointer; transition: background 0.2s, transform 0.1s;
+        box-shadow: 0 4px 14px rgba(192,57,43,0.25);
+    }
+    .btn-modal-delete:hover  { background: #a93226; }
+    .btn-modal-delete:active { transform: scale(0.97); }
+
     @media (max-width: 560px) {
-        .book-row { grid-template-columns: 44px 1fr; }
+        .book-row { grid-template-columns: 44px 1fr 32px; }
         .book-aside { display: none; }
         .catalog-header h1 { font-size: 1.7rem; }
         .drawer { width: 100vw; }
@@ -384,6 +479,7 @@
         .field-grid .field-full { grid-column: 1; }
         .cover-upload-area { flex-direction: column; }
         .cover-preview-wrap { width: 100%; height: 120px; }
+        .btn-delete { opacity: 1; }
     }
 </style>
 
@@ -396,10 +492,9 @@
             {% if books %}
                 <span class="book-count">{{ books|length }} book{{ 's' if books|length != 1 else '' }}</span>
             {% endif %}
-            {% if current_user.is_authenticated %}
+            {# Only admins can add books #}
+            {% if current_user.is_admin %}
                 <button class="btn-add" id="open-drawer-btn">+ Add Book</button>
-            {% else %}
-                <a href="{{ url_for('login') }}" class="btn-add">Log in to add</a>
             {% endif %}
         </div>
     </div>
@@ -448,6 +543,20 @@
                     {% if book.year %}<span class="year-tag">{{ book.year }}</span>{% endif %}
                     <span class="added-by">added by {{ book.added_by_user.username }}</span>
                 </div>
+                {% if current_user.is_admin %}
+                <button class="btn-delete"
+                        onclick="confirmDelete({{ book.id }}, this.dataset.title)"
+                        data-title="{{ book.title }}"
+                        title="Delete book"
+                        type="button">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6M14 11v6"/>
+                        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                    </svg>
+                </button>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -456,16 +565,38 @@
         <div class="empty-state">
             <div class="icon">📚</div>
             <p>No books in the catalog yet.</p>
-            {% if current_user.is_authenticated %}
+            {# Only admins can add books #}
+            {% if current_user.is_admin %}
                 <button class="btn-add" id="open-drawer-btn-empty">Add the first book</button>
-            {% else %}
-                <a href="{{ url_for('login') }}" class="btn-add">Log in to add a book</a>
             {% endif %}
         </div>
     {% endif %}
 </div>
 
-<!-- ═══════════ DRAWER ═══════════ -->
+
+<!-- ═══════════ DELETE CONFIRM MODAL ═══════════ -->
+<div class="modal-backdrop" id="modal-backdrop"></div>
+<div class="modal" id="delete-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+    </div>
+    <h2 class="modal-title" id="modal-title">Delete Book</h2>
+    <p class="modal-body">Remove <strong id="modal-book-title"></strong> from the catalog? This cannot be undone.</p>
+    <div class="modal-actions">
+        <button class="btn-modal-cancel" id="modal-cancel-btn" type="button">Cancel</button>
+        <form id="delete-form" method="post" action="">
+            <button class="btn-modal-delete" type="submit">Delete</button>
+        </form>
+    </div>
+</div>
+
+<!-- ═══════════ DRAWER (admin only) ═══════════ -->
+{% if current_user.is_admin %}
 <div class="drawer-backdrop" id="drawer-backdrop"></div>
 
 <div class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-heading">
@@ -633,7 +764,7 @@
         drawer.classList.add('open');
         backdrop.classList.add('open');
         document.body.style.overflow = 'hidden';
-        setTimeout(() => drawer.querySelector('input, select, textarea') && drawer.querySelector('input[type="text"]').focus(), 400);
+        setTimeout(() => { const inp = drawer.querySelector('input[type="text"]'); if(inp) inp.focus(); }, 400);
     }
     function closeDrawer() {
         drawer.classList.remove('open');
@@ -646,26 +777,11 @@
     closeBtn.addEventListener('click', closeDrawer);
     cancelBtn.addEventListener('click', closeDrawer);
     backdrop.addEventListener('click', closeDrawer);
-
-    // Close on Escape
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
 
-    // If there are form errors, re-open drawer automatically
     {% if form.errors %}
         openDrawer();
     {% endif %}
-
-    // ── Genre filter pills ──
-    document.querySelectorAll('.pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-            document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
-            pill.classList.add('active');
-            const genre = pill.dataset.genre;
-            document.querySelectorAll('.book-row').forEach(row => {
-                row.style.display = (genre === 'all' || row.dataset.genre === genre) ? '' : 'none';
-            });
-        });
-    });
 
     // ── Character counter ──
     function dUpdateCounter() {
@@ -718,6 +834,46 @@
         e.preventDefault(); dDropZone.classList.remove('dragover');
         const file = e.dataTransfer.files[0];
         if (file) { const dt = new DataTransfer(); dt.items.add(file); dInput.files = dt.files; dShowPreview(file); }
+    });
+</script>
+{% endif %}{# end is_admin drawer block #}
+
+<script>
+    // ── Delete confirmation modal ──
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    const deleteModal   = document.getElementById('delete-modal');
+    const deleteForm    = document.getElementById('delete-form');
+    const modalTitle    = document.getElementById('modal-book-title');
+    const modalCancel   = document.getElementById('modal-cancel-btn');
+
+    function confirmDelete(bookId, bookTitle) {
+        modalTitle.textContent = bookTitle;
+        deleteForm.action = '/book/' + bookId + '/delete';
+        deleteModal.classList.add('open');
+        modalBackdrop.classList.add('open');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        deleteModal.classList.remove('open');
+        modalBackdrop.classList.remove('open');
+        document.body.style.overflow = '';
+    }
+    if (modalCancel)   modalCancel.addEventListener('click', closeModal);
+    if (modalBackdrop) modalBackdrop.addEventListener('click', closeModal);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+<script>
+    // ── Genre filter pills ──
+    document.querySelectorAll('.pill').forEach(pill => {
+        pill.addEventListener('click', () => {
+            document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+            pill.classList.add('active');
+            const genre = pill.dataset.genre;
+            document.querySelectorAll('.book-row').forEach(row => {
+                row.style.display = (genre === 'all' || row.dataset.genre === genre) ? '' : 'none';
+            });
+        });
     });
 
     // ── Flash toast ──

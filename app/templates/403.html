@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap');
+:root { --gold: #c8862a; --folio-muted: #8a7d6a; }
+
+.error-page {
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 6rem 2rem;
+  text-align: center;
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+.error-number {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 7rem;
+  font-weight: 300;
+  line-height: 1;
+  color: #ece8e1;
+  letter-spacing: 0.05em;
+}
+.error-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem;
+  font-weight: 600;
+  color: #1a1209;
+  margin: 0.5rem 0 0.75rem;
+}
+.error-body {
+  font-size: 0.9rem;
+  color: var(--folio-muted);
+  margin-bottom: 2.5rem;
+  line-height: 1.7;
+}
+.btn-home {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 13px 30px;
+  background: #1a1209;
+  color: #faf6ee;
+  border-radius: 9px;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-home:hover { background: #2e2010; }
+</style>
+
+<div class="error-page">
+  <div class="error-number">403</div>
+  <h1 class="error-title">Access Restricted</h1>
+  <p class="error-body">
+    This area is reserved for admins.<br>
+    If you believe this is a mistake, ask an admin to update your role.
+  </p>
+  <a href="{{ url_for('index') }}" class="btn-home">Back to Catalog</a>
+</div>
+{% endblock %}
