@@ -13,8 +13,7 @@ class User(UserMixin, db.Model):
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     role: so.Mapped[str] = so.mapped_column(sa.String(16), nullable=False, default='customer')
 
-    posts: so.WriteOnlyMapped['Post'] = so.relationship(back_populates='author')
-    books: so.WriteOnlyMapped['Book'] = so.relationship(back_populates='added_by_user')
+    books: so.WriteOnlyMapped['Book'] = so.relationship(back_populates='added_by_user')  # FIXED
     reviews: so.WriteOnlyMapped['Review'] = so.relationship(back_populates='author')
 
     def __repr__(self):
@@ -69,16 +68,6 @@ class Book(db.Model):
     @property
     def review_count(self):
         return len(self.reviews)
-
-
-class Post(db.Model):
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    body: so.Mapped[str] = so.mapped_column(sa.String(300))
-    timestamp: so.Mapped[datetime] = so.mapped_column(
-        index=True, default=lambda: datetime.now(timezone.utc))
-    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id), index=True)
-
-    author: so.Mapped[User] = so.relationship(back_populates='posts')
 
 
 class Review(db.Model):

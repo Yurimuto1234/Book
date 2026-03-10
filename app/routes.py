@@ -1,10 +1,10 @@
 from flask import render_template, flash, redirect, url_for, Response, abort
 from app import app
-from app.forms import LoginForm, RegistrationForm, AddBookForm
+from app.forms import LoginForm, RegistrationForm, AddBookForm, ReviewForm
 from flask_login import current_user, login_user
 import sqlalchemy as sa
 from app import db
-from app.models import User, Book
+from app.models import User, Book, Review
 from flask_login import logout_user, login_required
 from flask import request
 from urllib.parse import urlsplit
@@ -118,6 +118,54 @@ def book_cover(book_id):
     if book is None or not book.cover_data:
         abort(404)
     return Response(book.cover_data, mimetype=book.cover_mimetype or 'image/jpeg')
+
+
+@app.route('/book/<int:book_id>', methods=['GET', 'POST'])
+@login_required
+def book_detail(book_id):
+    book = db.session.get(Book, book_id)
+    if book is None:
+        abort(404)
+
+    # Check if the current user has already reviewed this book
+    existing_review = db.session.scalar(
+        sa.select(Review).where(
+            Review.book_id == book_id,
+            Review.user_id == current_user.id
+        )
+    )
+
+    form = ReviewForm()
+    if form.validate_on_submit():
+        if existing_review:
+            flash('You have already reviewed this book.')
+            return redirect(url_for('book_detail', book_id=book_id))
+
+        review = Review(
+            body=form.body.data,
+            rating=int(form.rating.data),
+            user_id=current_user.id,
+            book_id=book_id
+        )
+        db.session.add(review)
+        db.session.commit()
+        flash('Your review has been posted!')
+        return redirect(url_for('book_detail', book_id=book_id))
+
+    reviews = db.session.scalars(
+        sa.select(Review)
+        .where(Review.book_id == book_id)
+        .order_by(Review.timestamp.desc())
+    ).all()
+
+    return render_template(
+        'book_detail.html',
+        title=book.title,
+        book=book,
+        reviews=reviews,
+        existing_review=existing_review,
+        form=form
+    )
 
 
 # ── Admin routes ───────────────────────────────────────────────────────────────
