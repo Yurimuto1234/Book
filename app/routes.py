@@ -167,6 +167,19 @@ def book_detail(book_id):
         form=form
     )
 
+@app.route('/review/<int:review_id>/delete', methods=['POST'])
+@login_required
+def delete_review(review_id):
+    review = db.session.get(Review, review_id)
+    if review is None:
+        abort(404)
+    if review.user_id != current_user.id:
+        abort(403)
+    book_id = review.book_id
+    db.session.delete(review)
+    db.session.commit()
+    flash('Your review has been deleted.')
+    return redirect(url_for('book_detail', book_id=book_id))
 
 # ── Admin routes ───────────────────────────────────────────────────────────────
 
@@ -211,3 +224,9 @@ def delete_book(book_id):
     db.session.commit()
     flash(f'"{title}" has been deleted.')
     return redirect(url_for('index'))
+
+@app.route('/user/<username>')
+@login_required
+def user(username):
+    user = db.first_or_404(sa.select(User).where(User.username == username))
+    return render_template('user.html', user = user)

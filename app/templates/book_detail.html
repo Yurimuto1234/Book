@@ -137,6 +137,29 @@
     color: rgba(255,255,255,0.45);
 }
 
+/* delete */
+.own-review-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+.delete-review-btn {
+    background: none;
+    border: 1px solid rgba(180, 60, 60, 0.25);
+    border-radius: 5px;
+    padding: 3px 6px;
+    cursor: pointer;
+    color: #b44;
+    display: flex;
+    align-items: center;
+    transition: background 0.15s, border-color 0.15s;
+}
+.delete-review-btn:hover {
+    background: rgba(180, 60, 60, 0.08);
+    border-color: rgba(180, 60, 60, 0.5);
+}
+
 /* Hero text */
 .hero-text {
     display: flex;
@@ -844,7 +867,17 @@
                                 </div>
                             </div>
                             {% if is_own %}
+                            <div class="own-review-actions">
                                 <span class="own-tag">Your review</span>
+                                <form method="post" action="{{ url_for('delete_review', review_id=review.id) }}" onsubmit="return confirm('Delete your review?')">
+                                    {{ form.hidden_tag() }}
+                                    <button type="submit" class="delete-review-btn" title="Delete review">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
                             {% endif %}
                         </div>
                         <div class="review-stars">

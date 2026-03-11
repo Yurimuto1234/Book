@@ -548,7 +548,7 @@
                 </div>
                 {% if current_user.is_admin %}
                 <button class="btn-delete"
-                        onclick="confirmDelete({{ book.id }}, this.dataset.title)"
+                        onclick="confirmDelete(event, {{ book.id }}, this.dataset.title)"
                         data-title="{{ book.title }}"
                         title="Delete book"
                         type="button">
@@ -850,6 +850,7 @@
     const modalCancel   = document.getElementById('modal-cancel-btn');
 
     function confirmDelete(bookId, bookTitle) {
+        event.stopPropagation();
         modalTitle.textContent = bookTitle;
         deleteForm.action = '/book/' + bookId + '/delete';
         deleteModal.classList.add('open');
