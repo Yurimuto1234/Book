@@ -398,9 +398,10 @@
 
 .review-body {
     font-family: var(--lora);
-    font-size: 0.875rem;
+    font-size: 0.9rem;
     line-height: 1.8;
     color: #4a4030;
+    white-space: pre-wrap; 
 }
 
 /* Empty reviews */
@@ -418,16 +419,14 @@
 
 /* ── Write review sidebar ── */
 .review-sidebar {
-    max-width: 560px;
     width: 100%;
-    margin: 0 auto;
 }
 
 .form-card {
     background: #fff;
     border: 1px solid var(--folio-border);
     border-radius: 14px;
-    padding: 1.75rem 1.5rem;
+    padding: 1.5rem 2rem;
     position: relative;
     box-shadow: 0 4px 20px rgba(26,18,9,0.06);
 }
@@ -448,6 +447,15 @@
 }
 .form-card-title em { font-style: italic; font-weight: 300; }
 
+.form-card-inner {
+    display: grid;
+    grid-template-columns: 220px 1fr auto;
+    gap: 1.5rem;
+    align-items: start;
+}
+@media (max-width: 680px) {
+    .form-card-inner { grid-template-columns: 1fr; }
+}
 /* Form fields */
 .f-field { margin-bottom: 1.1rem; }
 .f-field label {
@@ -865,7 +873,7 @@
                             {{ form.body(
                                 placeholder="What did you think? Share your honest reaction…",
                                 id="review-body",
-                                rows="5",
+                                rows="3",
                                 oninput="updateCounter()"
                             ) }}
                             <div class="char-counter" id="char-counter">0 / 2000</div>

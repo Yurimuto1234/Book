@@ -175,11 +175,11 @@
 
   <div class="admin-header">
     <h1>User <em>Roles</em></h1>
-    <span style="font-family:'Lora',serif; font-size:0.78rem; color:#aaa;">
+    <span style="font-family: Arial, Helvetica, sans-serif; font-size:0.78rem; color:#aaa;">
       {{ users|length }} user{{ 's' if users|length != 1 else '' }}
     </span>
   </div>
-  <p class="admin-subtitle">Assign or revoke the admin role. Customers can browse the catalog; admins can add and manage books.</p>
+  <p class="admin-subtitle">Trao hoặc hủy vai trò admin. Admin có thể trực tiếp thêm, quản lý sách</p>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% for category, message in messages %}
@@ -199,8 +199,8 @@
     <thead>
       <tr>
         <th>User</th>
-        <th>Current Role</th>
-        <th>Change Role</th>
+        <th>Vai trò hiện tại</th>
+        <th>Vai trò mới</th>
       </tr>
     </thead>
     <tbody>
@@ -237,7 +237,7 @@
         {# ── Action ── #}
         <td>
           {% if user.id == current_user.id %}
-            <span class="self-note">You cannot change your own role</span>
+            <span class="self-note">Không thể thay đổi role của bản thân</span>
           {% else %}
             <form class="role-form" action="{{ url_for('admin_set_role', user_id=user.id) }}" method="post">
               <select class="role-select" name="role" aria-label="Select role for {{ user.username }}">
