@@ -277,10 +277,10 @@
    TWO-COLUMN BODY
 ══════════════════════════════ */
 .detail-body {
-    display: grid;
-    grid-template-columns: 1fr 340px;
+    display: flex;
+    flex-direction: column;
     gap: 3rem;
-    align-items: start;
+
 }
 
 /* ── Reviews column ── */
@@ -418,8 +418,9 @@
 
 /* ── Write review sidebar ── */
 .review-sidebar {
-    position: sticky;
-    top: 24px;
+    max-width: 560px;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .form-card {
@@ -446,13 +447,6 @@
     margin: 0 0 0.35rem;
 }
 .form-card-title em { font-style: italic; font-weight: 300; }
-.form-card-sub {
-    font-size: 12px;
-    color: var(--folio-muted);
-    margin: 0 0 1.5rem;
-    font-family: var(--lora);
-    font-style: italic;
-}
 
 /* Form fields */
 .f-field { margin-bottom: 1.1rem; }
@@ -703,10 +697,6 @@
         gap: 1.5rem;
     }
     .hero-cover, .hero-spine { width: 140px; height: 200px; }
-    .detail-body {
-        grid-template-columns: 1fr;
-    }
-    .review-sidebar { position: static; }
 }
 @media (max-width: 520px) {
     .book-hero { grid-template-columns: 1fr; }
@@ -829,6 +819,69 @@
     <!-- ══ BODY ══ -->
     <div class="detail-body">
 
+                <!-- Write review sidebar -->
+        <div class="review-sidebar">
+            <p class="section-eyebrow">Write a Review</p>
+
+            {% if existing_review %}
+                <!-- Already reviewed -->
+                <div class="form-card">
+                    <div class="already-reviewed">
+                        <div class="check-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </div>
+                        <p>
+                            <strong>You've already reviewed this book</strong>
+                            Your thoughts are visible in the reviews panel.
+                        </p>
+                    </div>
+                </div>
+
+            {% else %}
+                <div class="form-card">
+                    <h2 class="form-card-title">Share your <em>thoughts</em></h2>
+
+                    <form method="post" action="{{ url_for('book_detail', book_id=book.id) }}" novalidate>
+                        {{ form.hidden_tag() }}
+
+                        <!-- Rating -->
+                        <div class="f-field">
+                            {{ form.rating.label }}
+                            <div class="input-wrap">
+                                {{ form.rating(class="") }}
+                            </div>
+                            {% if form.rating.errors %}
+                                <ul class="field-errors">
+                                    {% for e in form.rating.errors %}<li>{{ e }}</li>{% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+
+                        <!-- Review body -->
+                        <div class="f-field">
+                            {{ form.body.label }}
+                            {{ form.body(
+                                placeholder="What did you think? Share your honest reaction…",
+                                id="review-body",
+                                rows="5",
+                                oninput="updateCounter()"
+                            ) }}
+                            <div class="char-counter" id="char-counter">0 / 2000</div>
+                            {% if form.body.errors %}
+                                <ul class="field-errors">
+                                    {% for e in form.body.errors %}<li>{{ e }}</li>{% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+
+                        {{ form.submit(class="btn-review") }}
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+
         <!-- Reviews list -->
         <div class="reviews-col">
             <p class="section-eyebrow">Reader Reviews</p>
@@ -898,69 +951,7 @@
             {% endif %}
         </div>
 
-        <!-- Write review sidebar -->
-        <div class="review-sidebar">
-            <p class="section-eyebrow">Write a Review</p>
 
-            {% if existing_review %}
-                <!-- Already reviewed -->
-                <div class="form-card">
-                    <div class="already-reviewed">
-                        <div class="check-icon">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"/>
-                            </svg>
-                        </div>
-                        <p>
-                            <strong>You've already reviewed this book</strong>
-                            Your thoughts are visible in the reviews panel.
-                        </p>
-                    </div>
-                </div>
-
-            {% else %}
-                <div class="form-card">
-                    <h2 class="form-card-title">Share your <em>thoughts</em></h2>
-                    <p class="form-card-sub">Your review helps other readers decide.</p>
-
-                    <form method="post" action="{{ url_for('book_detail', book_id=book.id) }}" novalidate>
-                        {{ form.hidden_tag() }}
-
-                        <!-- Rating -->
-                        <div class="f-field">
-                            {{ form.rating.label }}
-                            <div class="input-wrap">
-                                {{ form.rating(class="") }}
-                            </div>
-                            {% if form.rating.errors %}
-                                <ul class="field-errors">
-                                    {% for e in form.rating.errors %}<li>{{ e }}</li>{% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-
-                        <!-- Review body -->
-                        <div class="f-field">
-                            {{ form.body.label }}
-                            {{ form.body(
-                                placeholder="What did you think? Share your honest reaction…",
-                                id="review-body",
-                                rows="5",
-                                oninput="updateCounter()"
-                            ) }}
-                            <div class="char-counter" id="char-counter">0 / 2000</div>
-                            {% if form.body.errors %}
-                                <ul class="field-errors">
-                                    {% for e in form.body.errors %}<li>{{ e }}</li>{% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-
-                        {{ form.submit(class="btn-review") }}
-                    </form>
-                </div>
-            {% endif %}
-        </div>
 
     </div><!-- /detail-body -->
 </div><!-- /detail-page -->

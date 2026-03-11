@@ -13,10 +13,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
 
 class AddBookForm(FlaskForm):
-    title = StringField('Book Title', validators=[DataRequired(), Length(max=200)])
-    author = StringField('Author', validators=[DataRequired(), Length(max=200)])
-    genre = SelectField('Genre', choices=[
-        ('', '— Select a genre —'),
+    title = StringField('Tên sách', validators=[DataRequired(), Length(max=200)])
+    author = StringField('Tác giả', validators=[DataRequired(), Length(max=200)])
+    genre = SelectField('Thể loại', choices=[
+        ('', '— Chọn một thể loại —'),
         ('Fiction', 'Fiction'),
         ('Non-Fiction', 'Non-Fiction'),
         ('Science Fiction', 'Science Fiction'),
@@ -29,15 +29,15 @@ class AddBookForm(FlaskForm):
         ('History', 'History'),
         ('Self-Help', 'Self-Help'),
         ('Other', 'Other'),
-    ], validators=[DataRequired(message='Please select a genre.')])
-    year = IntegerField('Year Published', validators=[
+    ], validators=[DataRequired(message='Chọn 1 thể loại.')])
+    year = IntegerField('Năm xuất bản', validators=[
         Optional(),
-        NumberRange(min=1, max=2100, message='Enter a valid year.')
+        NumberRange(min=1, max=2100, message='')
     ])
-    description = TextAreaField('Description', validators=[Optional(), Length(max=500)])
-    cover = FileField('Book Cover', validators=[
+    description = TextAreaField('Mô tả', validators=[Optional(), Length(max=500)])
+    cover = FileField('Trang bìa', validators=[
         Optional(),
-        FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'Images only — JPG, PNG or WEBP.'),
+        FileAllowed(['jpg', 'jpeg', 'png', 'webp'], 'JPG, PNG, WEBP.'),
     ])
     submit = SubmitField('Add Book')
 
@@ -64,14 +64,14 @@ class RegistrationForm(FlaskForm):
 
 class ReviewForm(FlaskForm):
     rating = SelectField('Rating', choices=[
-        ('5', '★★★★★  —  Masterpiece'),
-        ('4', '★★★★☆  —  Really good'),
-        ('3', '★★★☆☆  —  Decent'),
-        ('2', '★★☆☆☆  —  Disappointing'),
-        ('1', '★☆☆☆☆  —  Didn\'t work for me'),
+        ('5', '★★★★★  —  Kiệt tác'),
+        ('4', '★★★★☆  —  Rất tốt'),
+        ('3', '★★★☆☆  —  Bình thường'),
+        ('2', '★★☆☆☆  —  Thất vọng'),
+        ('1', '★☆☆☆☆  —  Tồi tệ'),
     ], validators=[DataRequired()])
-    body = TextAreaField('Your Review', validators=[
-        DataRequired(message='Please write something about the book.'),
-        Length(min=10, max=2000, message='Review must be between 10 and 2000 characters.')
+    body = TextAreaField('Nhận xét', validators=[
+        DataRequired(message='Viết nhận xét về quyển sách này.'),
+        Length(min=10, max=2000, message='Giới hạn từ 10 đến 2000 ký tự.')
     ])
-    submit = SubmitField('Submit Review')
+    submit = SubmitField('Đăng Review')
