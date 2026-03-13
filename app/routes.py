@@ -68,7 +68,11 @@ def index():
         return redirect(url_for('index'))
 
     books = db.session.scalars(sa.select(Book).order_by(Book.timestamp.desc())).all()
-    return render_template('index.html', title='Home', books=books, form=form)
+    top_books = sorted(
+    [b for b in books if b.avg_rating is not None],
+    key=lambda b: b.avg_rating,
+    reverse=True)[:5]
+    return render_template(url_for('index'), title='Home', books=books, top_books=top_books, form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
