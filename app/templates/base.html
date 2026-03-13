@@ -77,7 +77,7 @@
 		<header class="navbar" role="banner">
 			<a href="/index" class="brand" aria-label="Book Reviews home">
 				<span class="logo" aria-hidden="true"></span>
-				<span>Book Reviews</span>
+				<span>ZBook</span>
 			</a>
 
 			<nav role="navigation" aria-label="Primary" class="">
@@ -97,7 +97,7 @@
 							<a href="/categories/scifi" role="menuitem">Sci-Fi</a>
 						</div>
 					</div>
-					<a href="#about" class="nav_but">About</a>
+					<a href="{{url_for('about')}}" class="nav_but">About</a>
 
 					{% if current_user.is_authenticated and current_user.is_admin %}
 					<a href="{{ url_for('admin_users') }}" class="nav-admin">

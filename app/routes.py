@@ -230,3 +230,7 @@ def delete_book(book_id):
 def user(username):
     user = db.first_or_404(sa.select(User).where(User.username == username))
     return render_template('user.html', user = user)
+
+@app.route('/about')
+def about():
+    return render_template('about.html', title = 'About')
